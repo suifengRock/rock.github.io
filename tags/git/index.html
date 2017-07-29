@@ -6,18 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>go vendor机制与注意点 | rock</title>
+  <title>Tag: git | rock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="go自1.5后正式推出vendor用于管理依赖包Russ Cox给出极其简短的四句话说明:1234567If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/v">
-<meta property="og:type" content="article">
-<meta property="og:title" content="go vendor机制与注意点">
-<meta property="og:url" content="http://yoursite.com/2017/04/15/go-vendor机制与注意点/index.html">
+  <meta name="description" content="喜欢钻研后端技术，理性主义者。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="rock">
+<meta property="og:url" content="http://yoursite.com/tags/git/index.html">
 <meta property="og:site_name" content="rock">
-<meta property="og:description" content="go自1.5后正式推出vendor用于管理依赖包Russ Cox给出极其简短的四句话说明:1234567If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/v">
-<meta property="og:updated_time" content="2017-07-15T16:58:09.000Z">
+<meta property="og:description" content="喜欢钻研后端技术，理性主义者。">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="go vendor机制与注意点">
-<meta name="twitter:description" content="go自1.5后正式推出vendor用于管理依赖包Russ Cox给出极其简短的四句话说明:1234567If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/v">
+<meta name="twitter:title" content="rock">
+<meta name="twitter:description" content="喜欢钻研后端技术，理性主义者。">
   
   
     <link rel="icon" href="/favicon.png">
@@ -127,79 +126,54 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go-vendor机制与注意点" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      go vendor机制与注意点
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/07/16/git-flow/" class="archive-article-date">
+  	<time datetime="2017-07-15T16:54:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-16</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/07/16/git-flow/">git - 团队多人协作最佳实践</a>
     </h1>
   
 
-        <a href="/2017/04/15/go-vendor机制与注意点/" class="archive-article-date">
-  	<time datetime="2017-04-15T14:02:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-15</time>
-</a>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>go自1.5后正式推出vendor用于管理依赖包<br>Russ Cox给出极其简短的四句话说明:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/vendor/p” if that exists.</div><div class="line"></div><div class="line">When there are multiple possible resolutions,the most specific (longest) path wins.</div><div class="line"></div><div class="line">The short form must always be used: no import path can contain “/vendor/” explicitly.</div><div class="line"></div><div class="line">Import comments are ignored in vendored packages.</div></pre></td></tr></table></figure></p>
-<p>在实际使用vendor中，要搞清楚vendor规则和相关注意点，避免采坑</p>
-<h3 id="关于vendor的规则"><a href="#关于vendor的规则" class="headerlink" title="关于vendor的规则"></a>关于vendor的规则</h3><p>1: vendor不能直接放在src/下，必须放在src/xxx/包及其子包里面<br>2: 不能使用同一级中另一个包里面的vendor模块<br>3: 可以使用上一级(父级)的vendor</p>
-<h3 id="开启vendor模式的包查找顺序"><a href="#开启vendor模式的包查找顺序" class="headerlink" title="开启vendor模式的包查找顺序"></a>开启vendor模式的包查找顺序</h3><p>1: 首先在本包的vendor中查询<br>2: 然后在父级的vendor中查询，循环直到src退出(src/里面的vendor不会去查询)<br>3: 然后查询gopath/src/<br>4: 最后查询goroot/src/</p>
-<h3 id="关于vendor的一点思考"><a href="#关于vendor的一点思考" class="headerlink" title="关于vendor的一点思考"></a>关于vendor的一点思考</h3><p>golang终于有了自己的依赖管理机制,可以看到golang在不断的完善自己，满足人们的工程需要。<br>但引入vendor同样也引来来一些问题：<br>由于go的package是以路径组织的，在编译时，不同层次的vendor中相同的包会分别编译链接，<br>导致编译变慢，和运行文件变大。<br>要避免这个问题只能做一些规范：<br>1: 作为lib的包 不携带vendor更佳<br>2: 一个project内的所有vendor都集中在顶层vendor里面</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>golang官方实现了vendor依赖机制管理，但要更好更方便的用到项目上还需要一些第三方工具：<br>1：glide (个人推荐)<br>2: godep</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
 	</div>
 
-      
+          
 
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2017/07/16/git-flow/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          git - 团队多人协作最佳实践
-        
-      </div>
-    </a>
   
   
-    <a href="/2016/12/22/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
-      <i class="icon-circle-right"></i>
-    </a>
+    </div></section>
   
-</nav>
 
-
-
-
-
-
-
+    
 
 
           </div>
@@ -222,9 +196,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		root: "/",

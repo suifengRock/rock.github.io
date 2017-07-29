@@ -6,18 +6,32 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>go vendor机制与注意点 | rock</title>
+  <title>git - 团队多人协作最佳实践 | rock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="go自1.5后正式推出vendor用于管理依赖包Russ Cox给出极其简短的四句话说明:1234567If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/v">
+  <meta name="description" content="git是一个伟大的发明。是一个很好的分布式版本控制工具。但在团队没有一个很好地规范的情况，会产生很多不必要的冲突和麻烦。尤其是git分支管理维护，没有一个很好的，团队一致的流程，那将是一个灾难。
+git分支管理分支(branch)在git中是一个非常重要的概念。对于分支管理策略，大家普遍遵从git-flow流程。
+
+结合图片，简单介绍一下不同分支的职责。
+1.Production分支(Master">
 <meta property="og:type" content="article">
-<meta property="og:title" content="go vendor机制与注意点">
-<meta property="og:url" content="http://yoursite.com/2017/04/15/go-vendor机制与注意点/index.html">
+<meta property="og:title" content="git - 团队多人协作最佳实践">
+<meta property="og:url" content="http://yoursite.com/2017/07/16/git-flow/index.html">
 <meta property="og:site_name" content="rock">
-<meta property="og:description" content="go自1.5后正式推出vendor用于管理依赖包Russ Cox给出极其简短的四句话说明:1234567If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/v">
-<meta property="og:updated_time" content="2017-07-15T16:58:09.000Z">
+<meta property="og:description" content="git是一个伟大的发明。是一个很好的分布式版本控制工具。但在团队没有一个很好地规范的情况，会产生很多不必要的冲突和麻烦。尤其是git分支管理维护，没有一个很好的，团队一致的流程，那将是一个灾难。
+git分支管理分支(branch)在git中是一个非常重要的概念。对于分支管理策略，大家普遍遵从git-flow流程。
+
+结合图片，简单介绍一下不同分支的职责。
+1.Production分支(Master">
+<meta property="og:image" content="http://yoursite.com/img/git-flow.png">
+<meta property="og:updated_time" content="2017-07-29T14:07:16.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="go vendor机制与注意点">
-<meta name="twitter:description" content="go自1.5后正式推出vendor用于管理依赖包Russ Cox给出极其简短的四句话说明:1234567If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/v">
+<meta name="twitter:title" content="git - 团队多人协作最佳实践">
+<meta name="twitter:description" content="git是一个伟大的发明。是一个很好的分布式版本控制工具。但在团队没有一个很好地规范的情况，会产生很多不必要的冲突和麻烦。尤其是git分支管理维护，没有一个很好的，团队一致的流程，那将是一个灾难。
+git分支管理分支(branch)在git中是一个非常重要的概念。对于分支管理策略，大家普遍遵从git-flow流程。
+
+结合图片，简单介绍一下不同分支的职责。
+1.Production分支(Master">
+<meta name="twitter:image" content="http://yoursite.com/img/git-flow.png">
   
   
     <link rel="icon" href="/favicon.png">
@@ -127,30 +141,63 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go-vendor机制与注意点" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-git-flow" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      go vendor机制与注意点
+      git - 团队多人协作最佳实践
     </h1>
   
 
-        <a href="/2017/04/15/go-vendor机制与注意点/" class="archive-article-date">
-  	<time datetime="2017-04-15T14:02:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-15</time>
+        <a href="/2017/07/16/git-flow/" class="archive-article-date">
+  	<time datetime="2017-07-15T16:54:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-16</time>
 </a>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>go自1.5后正式推出vendor用于管理依赖包<br>Russ Cox给出极其简短的四句话说明:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">If there is a source directory d/vendor, then, when compiling a source file within the subtree rooted at d, import “p” is interpreted as import “d/vendor/p” if that exists.</div><div class="line"></div><div class="line">When there are multiple possible resolutions,the most specific (longest) path wins.</div><div class="line"></div><div class="line">The short form must always be used: no import path can contain “/vendor/” explicitly.</div><div class="line"></div><div class="line">Import comments are ignored in vendored packages.</div></pre></td></tr></table></figure></p>
-<p>在实际使用vendor中，要搞清楚vendor规则和相关注意点，避免采坑</p>
-<h3 id="关于vendor的规则"><a href="#关于vendor的规则" class="headerlink" title="关于vendor的规则"></a>关于vendor的规则</h3><p>1: vendor不能直接放在src/下，必须放在src/xxx/包及其子包里面<br>2: 不能使用同一级中另一个包里面的vendor模块<br>3: 可以使用上一级(父级)的vendor</p>
-<h3 id="开启vendor模式的包查找顺序"><a href="#开启vendor模式的包查找顺序" class="headerlink" title="开启vendor模式的包查找顺序"></a>开启vendor模式的包查找顺序</h3><p>1: 首先在本包的vendor中查询<br>2: 然后在父级的vendor中查询，循环直到src退出(src/里面的vendor不会去查询)<br>3: 然后查询gopath/src/<br>4: 最后查询goroot/src/</p>
-<h3 id="关于vendor的一点思考"><a href="#关于vendor的一点思考" class="headerlink" title="关于vendor的一点思考"></a>关于vendor的一点思考</h3><p>golang终于有了自己的依赖管理机制,可以看到golang在不断的完善自己，满足人们的工程需要。<br>但引入vendor同样也引来来一些问题：<br>由于go的package是以路径组织的，在编译时，不同层次的vendor中相同的包会分别编译链接，<br>导致编译变慢，和运行文件变大。<br>要避免这个问题只能做一些规范：<br>1: 作为lib的包 不携带vendor更佳<br>2: 一个project内的所有vendor都集中在顶层vendor里面</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>golang官方实现了vendor依赖机制管理，但要更好更方便的用到项目上还需要一些第三方工具：<br>1：glide (个人推荐)<br>2: godep</p>
+        <p>git是一个伟大的发明。是一个很好的分布式版本控制工具。<br>但在团队没有一个很好地规范的情况，会产生很多不必要的冲突和麻烦。<br>尤其是git分支管理维护，没有一个很好的，团队一致的流程，那将是一个灾难。</p>
+<h3 id="git分支管理"><a href="#git分支管理" class="headerlink" title="git分支管理"></a>git分支管理</h3><p>分支(branch)在git中是一个非常重要的概念。<br>对于分支管理策略，大家普遍遵从<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">git-flow</a>流程。</p>
+<p><img src="/img/git-flow.png" alt="git-flow-picture"></p>
+<p>结合图片，简单介绍一下不同分支的职责。</p>
+<p>1.Production分支(Master)</p>
+<p>这个分支是发布到生产环境的代码，这个分支只能从其他分支合并，不能在这个分支直接修改。</p>
+<p>2.Develop分支</p>
+<p>这个分支是主开发分支，包含所有要发布到下一个Release的代码，这个主要合并自其他分支，比如Feature分支。</p>
+<p>3.Feature分支</p>
+<p>Feature 分支主要用来开发一个新的功能，一旦开发完成，合并回Develop分支，并且进入下一个Release，Feature分支可以选择删除或者保留。</p>
+<p>4.Release分支</p>
+<p>当需要发布一个新Release的时候，基于Develop分支创建一个Release分支，Release分支在测试过程中可能会修改，完成Release后，合并到Master和Develop分支。</p>
+<p>5.Hotfix分支</p>
+<p>当在Production发现新的Bug时候，需要创建一个Hotfix分支, 完成Hotfix后，合并回Master和Develop分支，所以Hotfix的改动会进入下一个Release。</p>
+<p>Git Flow使用原则</p>
+<blockquote>
+<ul>
+<li>Master分支是线上稳定分支，Release通常用作测试分支，Develop分支是开发应用的主分支</li>
+<li>所有的功能开发都在Feature分支进行，然后合并到Develop分支</li>
+<li>Release分支发布后出现问题，直接在Release分支修改，避免Develop分支代码污染</li>
+</ul>
+</blockquote>
+<h3 id="git团队提交流程"><a href="#git团队提交流程" class="headerlink" title="git团队提交流程"></a>git团队提交流程</h3><p>团队中保持统一的提交流程，有利于减少不必要的冲突和异常问题，减少误操作，便于新成员融入。<br>在团队协作中，通常用一个git仓库中心，便于统一管理和存储，一般团内内部自建gitlib，或者选用公共平台私有团队仓库(github,bicketbucketd等).</p>
+<p>下面分享一个，个人经过这几年来总结而来的提交流程：</p>
+<blockquote>
+<p>当已经把更改的文件add，并且commit本地，想合并提交到团队共同开发分支时,假设目前自己本地的开发分支feature/new ,共同开发分支为develop。</p>
+<ul>
+<li>git check develop</li>
+<li>git pull origin develop</li>
+<li>git checkout feature/new</li>
+<li>git rebase develop</li>
+<li>git push origin feature/new</li>
+<li>在线上仓库中心开启一个MR(merge request)或者PR(pull request), 把新提交feature/new合并到develop</li>
+</ul>
+</blockquote>
+<p>此流程可以解决git团队协作中几大问题：<br>1：提交导致分支网络一片混乱<br>2：多人同时提交，代码被覆盖问题<br>3：code review 和合并权限管理问题</p>
+<p><a href="https://ihower.tw/blog/archives/3843" target="_blank" rel="external">《使用 git rebase 避免無謂的 merge》</a></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>强烈建议使用<a href="https://github.com/nvie/gitflow" target="_blank" rel="external">git-flow</a>这个插件,省事省力省心！！！</p>
+<p>工具终究是个死物，效果主要取决用的主人。清楚自己每一步都在干什么，这个才是最关键的。</p>
 
       
 
@@ -161,7 +208,7 @@
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
 	</div>
 
       
@@ -177,18 +224,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/07/16/git-flow/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/07/29/golang-project/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          git - 团队多人协作最佳实践
+          golang-project
         
       </div>
     </a>
   
   
-    <a href="/2016/12/22/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
+    <a href="/2017/04/15/go-vendor机制与注意点/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">go vendor机制与注意点</div>
       <i class="icon-circle-right"></i>
     </a>
   
