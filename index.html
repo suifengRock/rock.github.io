@@ -135,7 +135,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/29/golang-project/">golang-project</a>
+      <a class="article-title" href="/2017/07/29/golang-project/">golang 工程目录和gopath规范</a>
     </h1>
   
 
@@ -146,7 +146,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>golang是一门工程性很强的语言。从一开始就约定了很多规范：语法，代码格式，gobin,gopath，目录结构等<br>没有正确理解和正确使用的话，就会觉得golang很繁琐，而且会有很多奇奇怪怪的坑。</p>
+<h3 id="golang目录结构"><a href="#golang目录结构" class="headerlink" title="golang目录结构"></a>golang目录结构</h3><p>golang工程项目必须有三个目录 bin, pkg,src</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">golang工作区</div><div class="line">	|</div><div class="line">	-<span class="ruby">- bin				<span class="comment"># 编译出来的可执行文件</span></span></div><div class="line">	|</div><div class="line">	-<span class="ruby">- pkg				<span class="comment"># 编译出来的资源文件</span></span></div><div class="line">	|</div><div class="line">	-<span class="ruby">- src 				<span class="comment"># 项目代码目录</span></span></div><div class="line">	    |</div><div class="line">	    -<span class="ruby">- project1		        <span class="comment"># 项目1</span></span></div><div class="line">	    	|</div><div class="line">	        -<span class="ruby">- main.go</span></div><div class="line">	    -<span class="ruby">- project2		        <span class="comment"># 项目2</span></span></div><div class="line">	        |</div><div class="line">	        -<span class="ruby">- main.go</span></div></pre></td></tr></table></figure>
+<h3 id="gopath规范"><a href="#gopath规范" class="headerlink" title="gopath规范"></a>gopath规范</h3><p>根据官方的最佳推荐，gopath其实只要全局设定一个就可以，可以把它理解为工作区间。<br>go项目都放在，统一的工作区间的src目录里面。不需要每一个项目都去设置它的gopath.<br>每个项目独立的第三方依赖可以放在各自项目目录下的vendor里面。这样每个项目都不会相互影响。<br>提交代码只要提交src下的项目代码就可以，不需要把bin,pkg等其他提交上去。目前开源项目都遵循这种规范。</p>
+<p>这样有个问题：编辑器里面的目录栏会有多个项目一起展现，看起来不干净，找代码比较麻烦；而且go的命令都是在gopath下执行，但git一些命令又在代码目录下执行，要来回切换目录。<br>我的解决方法是： 引入make工具来管理简化各种命令<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># makefile</span></div><div class="line"><span class="keyword">export</span> GOPATH :=<span class="variable">$&#123;PWD&#125;</span></div><div class="line"><span class="keyword">export</span> GOBIN := <span class="variable">$&#123;GOPATH&#125;</span>/bin</div><div class="line"><span class="keyword">export</span> PATH := <span class="variable">$&#123;PATH&#125;</span>:<span class="variable">$&#123;GOBIN&#125;</span></div><div class="line"></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># help yourself</span></div><div class="line"><span class="comment">#</span></div><div class="line"></div><div class="line">build-project1:</div><div class="line">	go <span class="keyword">install</span> project1</div><div class="line"></div><div class="line"><span class="comment">#</span></div><div class="line">run-project1: build-project1</div><div class="line">	bin/project1</div></pre></td></tr></table></figure></p>
+<p>这样就可以按自己需要制定和简化命令操作，大大方便搬砖。</p>
+<p>enjoying !!!</p>
+
       
 
       
@@ -154,6 +161,11 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+	</div>
+
       
 
       
@@ -438,11 +450,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)">git</a>
+                <a href="javascript:void(0)">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)">golang</a>
+                <a href="javascript:void(0)">git</a>
               </li>
             
             <div class="clearfix"></div>
