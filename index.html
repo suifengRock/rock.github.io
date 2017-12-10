@@ -262,6 +262,152 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/buffer-panic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="rock">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/3774456">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="rock">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/buffer-panic/" itemprop="url">bytes.Buffer panic out of memory</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T22:49:50+08:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Golang/" itemprop="url" rel="index">
+                    <span itemprop="name">Golang</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>  在使用bytes.Buffer作读写缓冲数据时，需要注意几个问题，之前踩了大坑，被坑的不要不要的。<br>数据缓冲的原理就是，把数据都缓存到内存里面，后续的读写都从缓存里面直接操作。这里面要注意<br>几个问题：自己这个buffer最多会占用多少内存？什么时候释放？会不会影响其他程序？<br>宿主机资源够不够？等等，这些做的时候要考虑清楚，不然上线后一不小心就会panic.<br>下面说一下主要会引起的panic和解决办法。</p>
+<h3 id="bytes-Buffer-too-large"><a href="#bytes-Buffer-too-large" class="headerlink" title="bytes.Buffer: too large"></a>bytes.Buffer: too large</h3><p>  在使用bytes.Buffer读写时，函数说明里面都有一段<code>if becomes too large, will panic ErrTooLarge.</code>意思就是如果缓冲了太多数据，超过了限制的话，就非常暴力的直接panic。一开始不理解为什么要那么暴力，直到看到源码<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> maxInt = <span class="keyword">int</span>(^<span class="keyword">uint</span>(<span class="number">0</span>) &gt;&gt; <span class="number">1</span>)</div></pre></td></tr></table></figure></p>
+<p>buffer缓冲的最大限制就是maxInt这个数，有<code>9223372036854775807 byte</code>这么大,换算到后面要用PB作单位。。。这么一看，可以理解为什么那么暴力了.缓冲那么超级大量数据，要么就是失误，要么就是整体方案不对，所以选择直接panic暴露出来。这个问题我们不用太在意，现实上根本(极极极极小概率)不会遇到，毕竟现实中内存有超过maxInt的使用场景基本没有。</p>
+<h3 id="out-of-memory"><a href="#out-of-memory" class="headerlink" title="out of memory"></a>out of memory</h3><p>相比上面的panic,我们更应注意这个panic。顾名思义引起这个panic有几个错误，内存溢出或者宿主内存资源不足，资源耗尽。在使用buffer的时候就要注意，缓冲数据会不会过大？要提前做好限制。因为一般测试都是比较数据比较小，这个问题不会暴露，只有等到了线上时，资源被耗尽情况下，才会panic.又因为资源耗尽，没有做好隔离的话，会引起整个业务的崩溃。<br>解决的办法只有一个，也是必须要做的，做好缓冲数据的容量控制。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> buffMaxSize = <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">1</span>  <span class="comment">// 1GB</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">BuffWrite</span><span class="params">(data <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">  <span class="comment">// buffer 写入数据，然后检查是否过线需要处理数据</span></div><div class="line"></div><div class="line">  <span class="comment">// buffer.WriteString(data)</span></div><div class="line">  <span class="comment">// if buffer.Len() &gt; buffMaxSize &#123;</span></div><div class="line"></div><div class="line">  <span class="comment">// 处理缓冲里面的数据</span></div><div class="line">  <span class="comment">// buffer.Reset()</span></div><div class="line"></div><div class="line">  <span class="comment">// &#125;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后提一下:<br>上面只是提到buffer会panic这个问题，翻下源码，你会发现buffer底层使用的是[]byte这个slice，理论上来说任何一个slice不做控制的话，都会报这个panic.原因就是slice扩容的时候，是扩容2倍当前容量，如果不加控制，资源肯定会无休止的耗尽，最后panic。<br>要清楚的知道自己的边界，了解自我，做人如此，程序也如此。</p>
+<h4 id="Stay-Real"><a href="#Stay-Real" class="headerlink" title="Stay Real !!!~"></a>Stay Real !!!~</h4>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/29/golang-project/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -898,7 +1044,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
