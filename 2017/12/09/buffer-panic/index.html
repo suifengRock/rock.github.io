@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/12/09/buffer-panic/index.html">
 <meta property="og:site_name" content="rock">
 <meta property="og:description" content="在使用bytes.Buffer作读写缓冲数据时，需要注意几个问题，之前踩了大坑，被坑的不要不要的。数据缓冲的原理就是，把数据都缓存到内存里面，后续的读写都从缓存里面直接操作。这里面要注意几个问题：自己这个buffer最多会占用多少内存？什么时候释放？会不会影响其他程序？宿主机资源够不够？等等，这些做的时候要考虑清楚，不然上线后一不小心就会panic.下面说一下主要会引起的panic和解决办法。">
-<meta property="og:updated_time" content="2017-12-10T07:45:46.000Z">
+<meta property="og:updated_time" content="2018-09-09T10:10:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bytes.Buffer panic out of memory">
 <meta name="twitter:description" content="在使用bytes.Buffer作读写缓冲数据时，需要注意几个问题，之前踩了大坑，被坑的不要不要的。数据缓冲的原理就是，把数据都缓存到内存里面，后续的读写都从缓存里面直接操作。这里面要注意几个问题：自己这个buffer最多会占用多少内存？什么时候释放？会不会影响其他程序？宿主机资源够不够？等等，这些做的时候要考虑清楚，不然上线后一不小心就会panic.下面说一下主要会引起的panic和解决办法。">
@@ -313,8 +313,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang/" itemprop="url" rel="index">
-                    <span itemprop="name">Golang</span>
+                  <a href="/categories/golang/" itemprop="url" rel="index">
+                    <span itemprop="name">golang</span>
                   </a>
                 </span>
 
@@ -388,6 +388,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/09/http-keepalive/" rel="prev" title="golang http keep-alive (解决大量timewait连接)">
+                golang http keep-alive (解决大量timewait连接) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -464,7 +468,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -475,12 +479,21 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
           
 
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
           
 
         </nav>
@@ -548,7 +561,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
