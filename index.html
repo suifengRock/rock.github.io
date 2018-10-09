@@ -262,6 +262,154 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/17/mysql-alter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="rock">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/3774456">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="rock">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/17/mysql-alter/" itemprop="url">mysql大数据表修改结构</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-17T11:33:07+08:00">
+                2018-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>业务中我们经常会遇到需要修改表结构的需求，比如增加字段，增加索引，更改字段等<br>在一般情况数据量小，并发不大时，可以直接操作alter等<br>但在表数据量很大，现在并发不小时，更改语句执行时间过长，会导致慢查询过多，严重的直接服务不可用。<br>特别是有主从结构的时候，会导致从库的连锁反应。</p>
+<h3 id="大数据表修改结构造成影响"><a href="#大数据表修改结构造成影响" class="headerlink" title="大数据表修改结构造成影响"></a>大数据表修改结构造成影响</h3><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">锁表<span class="comment">(执行)</span>时间长，导致服务不可用</div><div class="line">慢查询过多<span class="comment">(堆积)</span>，mysql性能下降，影响服务稳定</div><div class="line">数据库机器<span class="comment">(主从库)</span>内存，硬盘不够用，执行需要用到内存，当内存不够时会用到tmp空间，</div><div class="line">主从同步问题</div><div class="line">。</div><div class="line">。</div><div class="line">。</div></pre></td></tr></table></figure>
+<p>所以操作大数据表示特别要小心谨慎，一不注意就会造成重大事故。</p>
+<h3 id="大数据表修改操作流程"><a href="#大数据表修改操作流程" class="headerlink" title="大数据表修改操作流程"></a>大数据表修改操作流程</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">建立一个跟更新表一样结构的数据表 作为中间表</div><div class="line">在中间表按需求做结构需改</div><div class="line">更新表里面加上触发器把增改操作同步到中间表，并记录触发同步标记</div><div class="line">把更新表数据插入中间表直到同步标记</div><div class="line">把更新表重命名其他，中间表重命名之前更新表的名字</div><div class="line">检查数据是否丢失</div></pre></td></tr></table></figure>
+<h3 id="几点建议"><a href="#几点建议" class="headerlink" title="几点建议"></a>几点建议</h3><p>首先能避免修改就尽量避免，<br>比如建个关联表，把新字段放在关联表里。。。等等</p>
+<p>另外一定要修改的话，特别要注意：<br>1，一定一定一定要在业务低峰时段操作<br>2，一定一定一定要在测试环境测试一遍，预估影响面和影响时间<br>3，一定要检查数据库机器的系统环境，内存大小，tmp空间大小等是否足够满足操作，<br>   特别要注意从库，注意从库，注意从库<br>4，预先叫齐相关人员，做好准备</p>
+<p>enjoy ^.^</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/09/http-keepalive/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1198,7 +1346,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1209,7 +1357,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1220,7 +1368,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
